@@ -1,10 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from './ui/button';
 import { Textarea } from './ui/textarea';
 
-const CourseModal: React.FC<{
+const AddCourseModal: React.FC<{
     isOpen: boolean;
     onClose: () => void;
     onAddCourse: () => void;
@@ -16,6 +16,7 @@ const CourseModal: React.FC<{
     setDetailsValue: React.Dispatch<React.SetStateAction<string>>;
     lecturerValue: string;
     setLecturerValue: React.Dispatch<React.SetStateAction<string>>;
+    isEditMode?: boolean;
   }> = ({
     isOpen,
     onClose,
@@ -27,10 +28,11 @@ const CourseModal: React.FC<{
     lecturerValue,
     setLecturerValue,
     detailsValue,
-    setDetailsValue
+    setDetailsValue,
+    isEditMode
   }) => {
     if (!isOpen) return null;
-    
+
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-opacity-50 bg-gray-500 p-4">
         <div className="bg-gray-900 p-4 rounded-md grid gap-4 w-full max-w-[400px]">
@@ -66,7 +68,7 @@ const CourseModal: React.FC<{
                 onClose();
               }}
             >
-              Add class
+              {isEditMode ? "Edit Class" : "Add class"}
             </button>
             <button
               className={cn(buttonVariants({variant: "destructive",}))}
@@ -80,4 +82,4 @@ const CourseModal: React.FC<{
     );
   };
 
-  export default CourseModal
+  export default AddCourseModal

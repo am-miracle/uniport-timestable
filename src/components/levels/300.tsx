@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import { ThirdData } from '../data';
-import CourseModal from '../CourseModal';
 import CoursePreviewModal from '../CoursePreviewModal';
+import AddCourseModal from '../AddCourseModal';
 
 
 const Third: React.FC = () => {
@@ -155,7 +155,7 @@ const Third: React.FC = () => {
             })}
           </div>
         ))}
-        <CourseModal
+        <AddCourseModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onAddCourse={handleAddCourseFromModal}

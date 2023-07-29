@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import { SecondData } from '../data';
-import CourseModal from '../CourseModal';
 import CoursePreviewModal from '../CoursePreviewModal';
+import AddCourseModal from '../AddCourseModal';
 
 
 const Second: React.FC = () => {
@@ -155,7 +155,7 @@ const Second: React.FC = () => {
             })}
           </div>
         ))}
-        <CourseModal
+        <AddCourseModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onAddCourse={handleAddCourseFromModal}

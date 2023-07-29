@@ -24,6 +24,7 @@ import {
     User,
     X,
     Menu,
+    Edit2,
     type Icon as LucideIcon,
   } from "lucide-react"
 
@@ -52,6 +53,7 @@ import {
     moon: Moon,
     laptop: Laptop,
     menu: Menu,
+    edit: Edit2,
     gitHub: ({ ...props }: LucideProps) => (
       <svg
         aria-hidden="true"

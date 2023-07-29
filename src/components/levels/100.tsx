@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { useToast } from '../ui/use-toast';
 import { FirstData } from '../data';
-import CourseModal from '../CourseModal';
 import CoursePreviewModal from '../CoursePreviewModal';
+import AddCourseModal from '../AddCourseModal';
 
 
 const First: React.FC = () => {
@@ -24,7 +24,8 @@ const First: React.FC = () => {
 
   const { toast } = useToast();
 
-  useEffect(() => {
+   // The useEffect hook to check and set the lecturer status from localStorage
+   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     let user = null;
 
@@ -155,7 +156,7 @@ const First: React.FC = () => {
             })}
           </div>
         ))}
-        <CourseModal
+        <AddCourseModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
           onAddCourse={handleAddCourseFromModal}
