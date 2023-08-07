@@ -1,4 +1,3 @@
-import { FourthData } from "@/components/data";
 import { toast } from "@/components/ui/use-toast";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -14,7 +13,6 @@ interface DayData {
 }
 interface TimetableState {
     currentData: DayData[];
-    // other properties
     isModalOpen: boolean;
     selectedDay: number
     selectedTimeSlot: number;
