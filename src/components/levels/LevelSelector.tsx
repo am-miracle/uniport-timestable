@@ -6,6 +6,8 @@ import Third from './300';
 import Four from './400';
 import Timetable from '../Timetable';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui/select';
+import { Provider } from 'react-redux';
+import store from '../store';
 
 
 const LevelSelector: React.FC = () => {
@@ -18,13 +20,13 @@ const LevelSelector: React.FC = () => {
   const renderLevelComponent = () => {
     switch (selectedLevel) {
       case '100':
-        return <First />;
+        return <Provider store={store}><First /></Provider>;
       case '200':
-        return <Second />;
+        return <Provider store={store}><Second /></Provider>;
       case '300':
-        return <Third />;
+        return <Provider store={store}><Third /></Provider>;
       case '400':
-        return <Four />;
+        return <Provider store={store}><Four /></Provider>;
       case 'general':
         return <Timetable />;
       default:
