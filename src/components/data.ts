@@ -1,5 +1,5 @@
 
-interface DataProps {
+export interface DataProps {
   day: string;
   schedule: {
     time: string;

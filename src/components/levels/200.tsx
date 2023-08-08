@@ -1,43 +1,64 @@
 "use client"
-import React, { useEffect, useState } from 'react';
-import { useToast } from '../ui/use-toast';
-import { SecondData } from '../data';
+import React, { useEffect } from 'react';
 import CoursePreviewModal from '../CoursePreviewModal';
 import AddCourseModal from '../AddCourseModal';
+import { Icons } from '../icons';
+import { useDispatch, useSelector } from 'react-redux';
+import { setLecturerStatus } from '../store/slice/authSlice';
+import {
+  openModal,
+  closeModal,
+  openPreviewModal,
+  closePreviewModal,
+  setEditingCourse,
+  setInputValue,
+  setVenueValue,
+  setLecturerValue,
+  setDetailsValue,
+  toggleEditMode,
+  addOrUpdateCourse,
+  setCurrentData,
+} from '../store/slice/timetableSlice';
+
+import { useToast } from '../ui/use-toast';
+import { SecondData } from '../data';
+
 
 
 const Second: React.FC = () => {
-  const [timetableData, setTimetableData] = useState<any>(SecondData);
-  const [inputValue, setInputValue] = useState<string>('');
-  const [venueValue, setVenueValue] = useState<string>('');
-  const [detailsValue, setDetailsValue] = useState<string>('');
-  const [lecturerValue, setLecturerValue] = useState<string>('');
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedDay, setSelectedDay] = useState<number>(-1);
-  const [selectedTimeSlot, setSelectedTimeSlot] = useState<number>(-1);
-  const [isPreviewModalOpen, setIsPreviewModalOpen] = useState<boolean>(false);
-  const [selectedCourse, setSelectedCourse] = useState<string>('');
-  const [selectedVenue, setSelectedVenue] = useState<string>('');
-  const [selectedLecturers, setSelectedLecturers] = useState<string[]>([]);
-  const [selectedDetails, setSelectedDetails] = useState<string>('');
-  const [isLecturer, setIsLecturer] = useState<boolean>(false);
+  const dispatch = useDispatch();
+  const authState = useSelector((state: any) => state.auth);
+  const isLecturer = authState.isLecturer;
+  // const timetableState = useSelector((state: any) => state.timetable);
+
+  const isModalOpen = useSelector((state: any) => state.timetable.isModalOpen);
+  const inputValue = useSelector((state: any) => state.timetable.inputValue);
+  const venueValue = useSelector((state: any) => state.timetable.venueValue);
+  const lecturerValue = useSelector((state: any) => state.timetable.lecturerValue);
+  const detailsValue = useSelector((state: any) => state.timetable.detailsValue);
+  const isEditMode = useSelector((state: any) => state.timetable.isEditMode);
+  const editingCourse = useSelector((state: any) => state.timetable.editingCourse);
+  const isPreviewModalOpen = useSelector((state: any) => state.timetable.isPreviewModalOpen);
+  const selectedCourse = useSelector((state: any) => state.timetable.selectedCourse);
+  const selectedVenue = useSelector((state: any) => state.timetable.selectedVenue);
+  const selectedLecturers = useSelector((state: any) => state.timetable.selectedLecturers);
+  const selectedDetails = useSelector((state: any) => state.timetable.selectedDetails);
 
   const { toast } = useToast();
 
   useEffect(() => {
+    dispatch(setCurrentData(SecondData))
     const storedUser = localStorage.getItem('user');
     let user = null;
 
     if (storedUser) {
       user = JSON.parse(storedUser);
-      setIsLecturer(user.role === 'lecturer');
+      dispatch(setLecturerStatus(user.role === 'lecturer'));
     }
-  }, []);
+  }, [dispatch]);
 
   const handleOpenModal = (dayIndex: number, timeSlotIndex: number) => {
-    setSelectedDay(dayIndex);
-    setSelectedTimeSlot(timeSlotIndex);
-    setIsModalOpen(true);
+    dispatch(openModal({ dayIndex, timeSlotIndex }));
   };
 
   const handleOpenPreviewModal = (
@@ -48,33 +69,24 @@ const Second: React.FC = () => {
     dayIndex: number,
     timeSlotIndex: number
   ) => {
-    setSelectedDay(dayIndex);
-    setSelectedTimeSlot(timeSlotIndex);
-    setSelectedCourse(course);
-    setSelectedVenue(venue);
-    setSelectedDetails(details);
-    setSelectedLecturers(lecturers);
-    setIsPreviewModalOpen(true);
+    dispatch(openPreviewModal({ course, venue, lecturers, details, dayIndex, timeSlotIndex }));
+  };
+
+  const handleEditCourse = (
+    course: string,
+    venue: string,
+    lecturers: string[],
+    details: string,
+    dayIndex: number,
+    timeSlotIndex: number,
+  ) => {
+    dispatch(setEditingCourse({ course, venue, lecturers, details }));
+    dispatch(openModal({ dayIndex, timeSlotIndex }));
+    toggleEditMode()
   };
 
   const handleAddCourseFromModal = () => {
-    const updatedTimetableData = [...timetableData];
-    const updatedSchedule = [...updatedTimetableData[selectedDay].schedule];
-    updatedSchedule[selectedTimeSlot].course = inputValue;
-    updatedSchedule[selectedTimeSlot].venue = venueValue;
-    updatedSchedule[selectedTimeSlot].details = detailsValue;
-    updatedSchedule[selectedTimeSlot].lecturers = [lecturerValue];
-    updatedTimetableData[selectedDay].schedule = updatedSchedule;
-    setTimetableData(updatedTimetableData);
-    setInputValue('');
-    setVenueValue('');
-    setDetailsValue('')
-    setLecturerValue('');
-    setIsModalOpen(false);
-
-    toast({
-      description: 'Class successfully added',
-    });
+    dispatch(addOrUpdateCourse());
   };
 
   const timeSlots = [
@@ -113,24 +125,17 @@ const Second: React.FC = () => {
                 (item: { time: string; course: string; venue?: string; lecturers?: string[] }) =>
                   item.time === timeSlot
               );
+              const isCourseAdded = courseData && courseData.course !== ''
               return (
                 <div
-                  className="flex items-center justify-center border border-gray-300 hover:bg-gray-700 cursor-pointer"
+                  className="flex items-center justify-center border border-gray-300 hover:bg-gray-700 cursor-pointer relative"
                   key={dayIndex}
                   onClick={() => {
-                    const courseData = dayData.schedule.find(
-                      (item: { time: string; course: string; venue?: string; lecturers?: string[] }) =>
-                        item.time === timeSlot
-                    );
-                    if (courseData && courseData.course !== '') {
-                      handleOpenPreviewModal(
-                        courseData.course,
-                        courseData.venue ?? '',
-                        courseData.lecturers ?? [],
-                        courseData.details ?? '',
-                        dayIndex,
-                        index
-                      );
+                    const { course, venue, lecturers, details } = courseData || {};
+                    if (course) {
+                      handleOpenPreviewModal(course, venue || '', lecturers || [], details || '', dayIndex, index);
+                    } else if (isLecturer) {
+                      handleEditCourse('', '', [], '', dayIndex, index, );
                     } else if (!courseData || courseData.course === '') {
                       if (isLecturer) {
                         handleOpenModal(dayIndex, index);
@@ -150,6 +155,25 @@ const Second: React.FC = () => {
                   ) : (
                     'No course'
                   )}
+                  {isCourseAdded && courseData && (
+                    <button
+                      className="absolute top-0 right-0 bg-gray-500 text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditCourse(
+                          courseData.course,
+                          courseData.venue || '',
+                          courseData.lecturers || [],
+                          courseData.details || '',
+                          dayIndex,
+                          index
+                        );
+                        !!editingCourse && setEditingCourse(false)
+                      }}
+                    >
+                      <Icons.edit className='h-5 w-5' />
+                    </button>
+                  )}
                 </div>
               );
             })}
@@ -157,20 +181,21 @@ const Second: React.FC = () => {
         ))}
         <AddCourseModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => dispatch(closeModal())}
           onAddCourse={handleAddCourseFromModal}
           inputValue={inputValue}
-          setInputValue={setInputValue}
+          setInputValue={(value) => dispatch(setInputValue(value))}
           venueValue={venueValue}
-          setVenueValue={setVenueValue}
-          detailsValue={detailsValue}
-          setDetailsValue={setDetailsValue}
+          setVenueValue={(value) => dispatch(setVenueValue(value))}
           lecturerValue={lecturerValue}
-          setLecturerValue={setLecturerValue}
+          setLecturerValue={(value) => dispatch(setLecturerValue(value))}
+          detailsValue={detailsValue}
+          setDetailsValue={(value) => dispatch(setDetailsValue(value))}
+          isEditMode={isEditMode}
         />
         <CoursePreviewModal
           isOpen={isPreviewModalOpen}
-          onClose={() => setIsPreviewModalOpen(false)}
+          onClose={() => dispatch(closePreviewModal())}
           course={selectedCourse}
           venue={selectedVenue}
           lecturers={selectedLecturers}
