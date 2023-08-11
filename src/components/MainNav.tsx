@@ -6,6 +6,7 @@ import { useSelectedLayoutSegment } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { Icons } from "@/components/icons"
 import { MobileNav } from "@/components/mobile-nav"
+import Image from "next/image"
 
 interface MainNavProps {
   items?: {
@@ -24,7 +25,12 @@ export function MainNav({ items, children }: MainNavProps) {
     <div className="flex gap-6 md:gap-10">
       <Link href="/" className="hidden items-center space-x-2 md:flex">
         <span className="hidden font-bold sm:inline-block text-xl">
-          CSC
+          <Image
+            src={"/Logo.jpg"}
+            alt="logo"
+            width={50}
+            height={50}
+          />
         </span>
       </Link>
       {items?.length ? (
