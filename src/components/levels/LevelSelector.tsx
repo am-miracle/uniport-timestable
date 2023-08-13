@@ -8,6 +8,7 @@ import Timetable from '../Timetable';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui/select';
 import { Provider } from 'react-redux';
 import store from '../store';
+import { Button } from '../ui/button';
 
 
 const LevelSelector: React.FC = () => {
@@ -36,9 +37,10 @@ const LevelSelector: React.FC = () => {
 
   return (
     <div className='grid gap-3'>
-      <div className='lg:grid justify-items-end'>
+      <div className='flex items-start justify-between flex-col lg:flex-row gap-2'>
+        <Button className="w-full lg:w-[180px]">Create new table</Button>
         <Select onValueChange={handleLevelChange}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="lg:w-[180px] w-full">
             <SelectValue placeholder="Select a Level" />
           </SelectTrigger>
           <SelectContent>

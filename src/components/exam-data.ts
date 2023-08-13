@@ -1,23 +1,24 @@
- interface Exam {
-    date: string;
-    day: string;
-    morning?: {
-      course: string[] | string;
-      time: string;
-      venue: string;
-      supervisor: string;
-      lecturers: string[];
-      invigilators: string[];
-    };
-    afternoon?: {
-      course: string[] | string;
-      time: string;
-      venue: string;
-      supervisor: string;
-      lecturers: string[];
-      invigilators: string[];
-    };
-}
+export type Exam = {
+  date: string;
+  day: string;
+  morning?: {
+    course: string | string[];
+    time: string;
+    venue: string;
+    supervisor: string;
+    lecturers: string[];
+    invigilators: string[];
+  };
+  afternoon?: {
+    course: string;
+    time: string;
+    venue: string;
+    supervisor: string;
+    lecturers: string[];
+    invigilators: string[];
+  };
+};
+
 
 
 export const exams: Exam[] = [

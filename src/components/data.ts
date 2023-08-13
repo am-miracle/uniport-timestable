@@ -133,9 +133,9 @@ export const FourthData: DataProps[] = [
           "Mr. E. Wobidi",
         ] },
         { time: '10AM - 11AM', course: 'CSC 498.1', venue: "CSC hall 2", lecturers: [
-          "Dr Oghenekaro",
-          "Dr Oghenekaro",
-          "Dr Oghenekaro"
+          "Prof. B.O. Eke",
+          "Mr. A.O. Ugbari",
+          "Ekeocha Adams"
         ] },
         { time: '11AM - 12PM', course: 'CSC 496.1', venue: "CSC hall 2", lecturers: [
           "Prof. L. N. Onyejegbu,",
