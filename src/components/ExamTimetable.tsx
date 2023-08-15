@@ -1,5 +1,5 @@
 "use client"
-import React, { ChangeEvent, useState } from 'react'
+import React, { ChangeEvent, useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -12,10 +12,26 @@ import {
 import { Exam, exams } from './exam-data'
 import { Button } from './ui/button'
 import { sendEmail } from '@/app/api/exam-timetable/send-email'
+import { useToast } from './ui/use-toast'
 
 const ExamTimetable = () => {
   const [editMode, setEditMode] = useState(false);
   const [updatedExams, setUpdatedExams] = useState<Exam[]>(exams); // Initialize with initial data
+  const [changedExams, setChangedExams] = useState<number[]>([]);
+  const [isTimetableOfficer, setIsTimetableOfficer] = useState<boolean>(false);
+  const {toast} = useToast();
+
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    let user = null;
+
+    if (storedUser) {
+      user = JSON.parse(storedUser);
+      setIsTimetableOfficer(user.role === 'timetable-officer');
+    }
+  }, []);
+
 
   const toggleEditMode = () => {
     setEditMode(!editMode);
@@ -65,39 +81,83 @@ const ExamTimetable = () => {
           newExams[index].morning!.invigilators = value as string[];
         }
         break;
-      case 'afternoon':
+      // case 'afternoon':
+      //   if (newExams[index].afternoon) {
+      //     newExams[index].afternoon!.course = value as string;
+      //     newExams[index].afternoon!.time = value as string;
+      //     newExams[index].afternoon!.venue = value as string;
+      //     newExams[index].afternoon!.supervisor = value as string;
+      //     newExams[index].afternoon!.lecturers = value as string[];
+      //     newExams[index].afternoon!.invigilators = value as string[];
+      //   }
+      //   break;
+      // Add more cases for other fields...
+      case 'afternoonCourse':
         if (newExams[index].afternoon) {
           newExams[index].afternoon!.course = value as string;
+        }
+        break;
+      case 'afternoonTime':
+        if (newExams[index].afternoon) {
           newExams[index].afternoon!.time = value as string;
+        }
+        break;
+      case 'afternoonVenue':
+        if (newExams[index].afternoon) {
           newExams[index].afternoon!.venue = value as string;
+        }
+        break;
+      case 'afternoonSupervisor':
+        if (newExams[index].afternoon) {
           newExams[index].afternoon!.supervisor = value as string;
+        }
+        break;
+      case 'afternoonLecturer':
+        if (newExams[index].afternoon) {
           newExams[index].afternoon!.lecturers = value as string[];
+        }
+        break;
+      case 'afternoonInvigilator':
+        if (newExams[index].afternoon) {
           newExams[index].afternoon!.invigilators = value as string[];
         }
         break;
-      // Add more cases for other fields...
       default:
         break;
     }
 
     setUpdatedExams(newExams); // Update the state with the modified data
+    setChangedExams((prevChangedExams) => {
+      if (!prevChangedExams.includes(index)) {
+        return [...prevChangedExams, index];
+      }
+      return prevChangedExams;
+    });
+  };
 
-    // After updating the state, send an email when changes are saved
+  useEffect(() => {
     if (!editMode) {
-      const changedExams = newExams.filter((exam, i) => i === index && JSON.stringify(exam) !== JSON.stringify(updatedExams[i]));
-
       if (changedExams.length > 0) {
-        const emailsToSend = ["judemiraco0@gmail.com", "judedivine68@gmail.com"]; // Array of email addresses to send the email to
-        sendEmail(emailsToSend); // Call the function to send the email
+        const emailsToSend = [
+        'jmiracle705@gmail.com',
+        "oladimejiolanrewaju745@gmail.com",
+        'ejoel0035@gmail.com',
+        "giovannichindah@yahoo.com"
+      ];
+        sendEmail(emailsToSend);
+        toast({
+          description: 'Email sent',
+        })
       }
     }
-  };
+  }, [editMode, changedExams, toast]);
 
   return (
     <div className="overflow-x-auto">
-      <Button onClick={toggleEditMode}>
+      {isTimetableOfficer && <Button onClick={toggleEditMode}>
         {editMode ? 'Exit Edit Mode' : 'Create new Timetable'}
-      </Button>
+        </Button>
+      }
       <Table>
          <TableCaption>NOTE: GES Registration Handbook is required for GES Examination.</TableCaption>
         <TableHeader>
@@ -237,12 +297,87 @@ const ExamTimetable = () => {
                         <TableCell></TableCell>
                       </>
                     )}
-                      <TableCell>{exam.afternoon?.course}</TableCell>
-                      <TableCell>{exam.afternoon?.time}</TableCell>
-                      <TableCell>{exam.afternoon?.venue}</TableCell>
-                      <TableCell>{exam.afternoon?.supervisor}</TableCell>
-                      <TableCell>{exam.afternoon?.lecturers.join(', ')}</TableCell>
-                      <TableCell>{exam.afternoon?.invigilators.join(', ')}</TableCell>
+                    <TableCell>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.course}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonCourse', e.target.value)
+                          }
+                        />
+                      ): (
+                        Array.isArray(exam.afternoon?.course)
+                              ? exam.afternoon?.course.join(' / ')
+                              : exam.afternoon?.course
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.time}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonTime', e.target.value)
+                          }
+                        />
+                      ) : (
+                        exam.afternoon?.time
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {/* {exam.afternoon?.venue} */}
+                    {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.venue}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonVenue', e.target.value)
+                          }
+                        />
+                      ) : (
+                        exam.afternoon?.venue
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.supervisor}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonSupervisor', e.target.value)
+                          }
+                        />
+                      ) : (
+                        exam.afternoon?.supervisor
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.lecturers}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonLecturer', e.target.value.split(','))
+                          }
+                        />
+                      ) : (
+                        exam.afternoon?.lecturers.join(', ')
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editMode ? (
+                        <input
+                          type="text"
+                          value={exam.afternoon?.invigilators}
+                          onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                            handleInputChange(index, 'afternoonInvigilator', e.target.value.split(','))
+                          }
+                        />
+                      ) : (
+                        exam.afternoon?.invigilators.join(', ')
+                      )}
+                    </TableCell>
                   </>
                 )}
               </TableRow>

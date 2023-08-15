@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import CoursePreviewModal from '../CoursePreviewModal';
 import AddCourseModal from '../AddCourseModal';
 import { Icons } from '../icons';
@@ -22,6 +22,7 @@ import {
 
 import { useToast } from '../ui/use-toast';
 import { FourthData } from '../data';
+import { sendClassEmail, sendClassUpdateEmail } from '@/app/api/exam-timetable/send-email';
 
 
 
@@ -43,6 +44,8 @@ const Four: React.FC = () => {
   const selectedVenue = useSelector((state: any) => state.timetable.selectedVenue);
   const selectedLecturers = useSelector((state: any) => state.timetable.selectedLecturers);
   const selectedDetails = useSelector((state: any) => state.timetable.selectedDetails);
+  const [isTimetableOfficer, setIsTimetableOfficer] = useState<boolean>(false);
+
 
   const { toast } = useToast();
 
@@ -56,6 +59,16 @@ const Four: React.FC = () => {
       dispatch(setLecturerStatus(user.role === 'lecturer'));
     }
   }, [dispatch]);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    let user = null;
+
+    if (storedUser) {
+      user = JSON.parse(storedUser);
+      setIsTimetableOfficer(user.role === 'timetable-officer');
+    }
+  }, []);
 
   const handleOpenModal = (dayIndex: number, timeSlotIndex: number) => {
     dispatch(openModal({ dayIndex, timeSlotIndex }));
@@ -87,6 +100,16 @@ const Four: React.FC = () => {
 
   const handleAddCourseFromModal = () => {
     dispatch(addOrUpdateCourse());
+    const emailsToSend = [
+      'jmiracle705@gmail.com',
+      "oladimejiolanrewaju745@gmail.com",
+      'ejoel0035@gmail.com',
+      "giovannichindah@yahoo.com"
+    ];
+    sendClassEmail(emailsToSend);
+      toast({
+        description: 'Email sent',
+      })
   };
 
   const timeSlots = [
@@ -134,10 +157,20 @@ const Four: React.FC = () => {
                     const { course, venue, lecturers, details } = courseData || {};
                     if (course) {
                       handleOpenPreviewModal(course, venue || '', lecturers || [], details || '', dayIndex, index);
-                    } else if (isLecturer) {
+                    } else if (isLecturer || isTimetableOfficer) {
                       handleEditCourse('', '', [], '', dayIndex, index, );
+                      const emailsToSend = [
+                        'jmiracle705@gmail.com',
+                        "oladimejiolanrewaju745@gmail.com",
+                        'ejoel0035@gmail.com',
+                        "giovannichindah@yahoo.com"
+                      ];
+                      sendClassEmail(emailsToSend);
+                        toast({
+                          description: 'Email sent',
+                        })
                     } else if (!courseData || courseData.course === '') {
-                      if (isLecturer) {
+                      if (isLecturer || isTimetableOfficer) {
                         handleOpenModal(dayIndex, index);
                       } else {
                         toast({
@@ -168,7 +201,17 @@ const Four: React.FC = () => {
                           dayIndex,
                           index
                         );
-                        !!editingCourse && setEditingCourse(false)
+                        !!editingCourse && setEditingCourse(false);
+                        const emailsToSend = [
+                          'jmiracle705@gmail.com',
+                          "oladimejiolanrewaju745@gmail.com",
+                          'ejoel0035@gmail.com',
+                          "giovannichindah@yahoo.com"
+                        ];
+                        sendClassUpdateEmail(emailsToSend);
+                          toast({
+                            description: 'Email sent',
+                          })
                       }}
                     >
                       <Icons.edit className='h-5 w-5' />
@@ -182,7 +225,9 @@ const Four: React.FC = () => {
         <AddCourseModal
           isOpen={isModalOpen}
           onClose={() => dispatch(closeModal())}
-          onAddCourse={handleAddCourseFromModal}
+          onAddCourse={
+            handleAddCourseFromModal
+          }
           inputValue={inputValue}
           setInputValue={(value) => dispatch(setInputValue(value))}
           venueValue={venueValue}

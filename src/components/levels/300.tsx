@@ -22,6 +22,7 @@ import {
 
 import { useToast } from '../ui/use-toast';
 import { ThirdData } from '../data';
+import { sendClassEmail, sendClassUpdateEmail } from '@/app/api/exam-timetable/send-email';
 
 
 
@@ -82,11 +83,31 @@ const Third: React.FC = () => {
   ) => {
     dispatch(setEditingCourse({ course, venue, lecturers, details }));
     dispatch(openModal({ dayIndex, timeSlotIndex }));
+    const emailsToSend = [
+      'jmiracle705@gmail.com',
+      "oladimejiolanrewaju745@gmail.com",
+      'ejoel0035@gmail.com',
+      "giovannichindah@yahoo.com"
+    ];
+    sendClassUpdateEmail(emailsToSend);
+      toast({
+        description: 'Email sent',
+      })
     toggleEditMode()
   };
 
   const handleAddCourseFromModal = () => {
     dispatch(addOrUpdateCourse());
+    const emailsToSend = [
+      'jmiracle705@gmail.com',
+      "oladimejiolanrewaju745@gmail.com",
+      'ejoel0035@gmail.com',
+      "giovannichindah@yahoo.com"
+    ];
+    sendClassEmail(emailsToSend);
+      toast({
+        description: 'Email sent',
+      })
   };
 
   const timeSlots = [

@@ -118,6 +118,10 @@ export function RegisterForm({ ...className }) {
               <RadioGroupItem value="lecturer" id="r2" role="lecturer" onChange={() => setRole("lecturer")} />
               <Label htmlFor="r2">Lecturer/Professor</Label>
             </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem value="timetable-officer" id="r3" role="timetable-officer" onChange={() => setRole("timetable-officer")} />
+              <Label htmlFor="r2">Timetable officer</Label>
+            </div>
           </RadioGroup>
           <button
             className={cn(buttonVariants())}
