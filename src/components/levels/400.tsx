@@ -107,9 +107,6 @@ const Four: React.FC = () => {
       "giovannichindah@yahoo.com"
     ];
     sendClassEmail(emailsToSend);
-      toast({
-        description: 'Email sent',
-      })
   };
 
   const timeSlots = [
@@ -166,9 +163,6 @@ const Four: React.FC = () => {
                         "giovannichindah@yahoo.com"
                       ];
                       sendClassEmail(emailsToSend);
-                        toast({
-                          description: 'Email sent',
-                        })
                     } else if (!courseData || courseData.course === '') {
                       if (isLecturer || isTimetableOfficer) {
                         handleOpenModal(dayIndex, index);
@@ -209,9 +203,6 @@ const Four: React.FC = () => {
                           "giovannichindah@yahoo.com"
                         ];
                         sendClassUpdateEmail(emailsToSend);
-                          toast({
-                            description: 'Email sent',
-                          })
                       }}
                     >
                       <Icons.edit className='h-5 w-5' />

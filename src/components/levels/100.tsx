@@ -90,9 +90,6 @@ const First: React.FC = () => {
       "giovannichindah@yahoo.com"
     ];
     sendClassUpdateEmail(emailsToSend);
-      toast({
-        description: 'Email sent',
-      })
     toggleEditMode()
   };
 
@@ -105,9 +102,6 @@ const First: React.FC = () => {
       "giovannichindah@yahoo.com"
     ];
       sendClassEmail(emailsToSend);
-      toast({
-        description: 'Email sent',
-      })
   };
 
   const timeSlots = [
